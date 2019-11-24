@@ -37,6 +37,7 @@
 #define FLAG_AUDIO_ONLY         0x00000400
 #define FLAG_FORCE_SORT         0x00000800
 #define FLAG_CAPTION_RES        0x00001000
+#define FLAG_CONVERT_MS         0x00004000 /* convert ms to s */
 /* Response-related flags */
 #define FLAG_HAS_CAPTIONS       0x80000000
 #define RESPONSE_FLAGS          0xF0000000
@@ -68,6 +69,7 @@ enum client_types {
 	ESamsungSeriesA,
 	ESamsungSeriesB,
 	ESamsungSeriesCDEBDP,
+	ESamsungSeriesQ,
 	ESamsungSeriesCDE,
 	ESonyBDP,
 	ESonyBravia,

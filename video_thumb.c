@@ -79,7 +79,6 @@
 #include "video_thumb.h"
 #include "utils.h"
 
-
 #ifdef ENABLE_VIDEO_THUMB
 static int
 get_video_packet(AVFormatContext *ctx, AVCodecContext *vctx,
@@ -150,7 +149,7 @@ video_thumb_generate_tofile(const char *moviefname, const char *thumbfname, int 
 	av_log_set_level(AV_LOG_QUIET);
 	memset(&img, 0, sizeof(image_s));
 
-	if ((video_thumb_generate_tobuff(moviefname, &img, seek, width, PIX_FMT_RGB32_1) < 0))
+	if ((video_thumb_generate_tobuff(moviefname, &img, seek, width, AV_PIX_FMT_RGB32_1) < 0))
 	{
 		DPRINTF(E_WARN, L_METADATA, "video_thumb_generate_tofile: unable to generate thumbnail to buffer! \n");
 		return -1;
@@ -251,12 +250,12 @@ video_thumb_generate_ctx_tobuff(AVFormatContext *fctx, void* imgbuffer, int seek
 		goto thumb_generate_error;
 	}
 
-	if (frame->interlaced_frame)
-	{
-		DPRINTF(E_DEBUG, L_METADATA, "video_thumb_generate_tobuff: got an interlaced video \n");
-		avpicture_deinterlace((AVPicture*) frame, (AVPicture*) frame,
-					vcctx->pix_fmt, vcctx->width, vcctx->height);
-	}
+//	if (frame->interlaced_frame)
+//	{
+//		DPRINTF(E_DEBUG, L_METADATA, "video_thumb_generate_tobuff: got an interlaced video \n");
+//		avpicture_deinterlace((AVPicture*) frame, (AVPicture*) frame,
+//					vcctx->pix_fmt, vcctx->width, vcctx->height);
+//	}
 
 	dwidth = width;
 	dheight = (int) ((float) (width * vcctx->height) / vcctx->width );
@@ -463,7 +462,7 @@ video_thumb_generate_mta_file(const char *moviefname, int duration, int allblack
 #ifdef ENABLE_VIDEO_THUMB
 		if ( !allblack && fctx)
 		{
-			res = video_thumb_generate_ctx_tobuff(fctx, &img, per[i], MTA_WIDTH, PIX_FMT_RGB32_1);
+			res = video_thumb_generate_ctx_tobuff(fctx, &img, per[i], MTA_WIDTH, AV_PIX_FMT_RGB32_1);
 			if (img.buf)
 			{
 				jpeg = image_save_to_jpeg_buf(&img, &jpegsize);

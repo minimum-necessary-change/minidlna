@@ -942,9 +942,13 @@ callback(void *args, int argc, char **argv, char **azColName)
 			ret = strcatf(str, "&lt;dc:date&gt;%s&lt;/dc:date&gt;", date);
 		}
 		if( passed_args->filter & FILTER_SEC_DCM_INFO ) {
-			/* Get bookmark */
+            /* Get bookmark */
+		  int sec = sql_get_int_field(db, "SELECT SEC from BOOKMARKS where ID = '%s'", detailID);
+			if( passed_args->flags & FLAG_CONVERT_MS ) {
+			  sec *= 1000;
+			}
 			ret = strcatf(str, "&lt;sec:dcmInfo&gt;CREATIONDATE=0,FOLDER=%s,BM=%d&lt;/sec:dcmInfo&gt;",
-			              title, sql_get_int_field(db, "SELECT SEC from BOOKMARKS where ID = '%s'", detailID));
+			              title, sec);
 		}
 		if( (passed_args->filter & FILTER_SEC_META_FILE_INFO) && runtime_vars.mta > 0 && mta && *mta != '0' ) {
 			ret = strcatf(str, "&lt;sec:MetaFileInfo sec:type=&quot;mta&quot;&gt;http://%s:%d/MTA/%s.mta&lt;/sec:MetaFileInfo&gt;",
@@ -1963,6 +1967,11 @@ SamsungSetBookmark(struct upnphttp * h, const char * action)
 	ObjectID = GetValueFromNameValueList(&data, "ObjectID");
 	PosSecond = GetValueFromNameValueList(&data, "PosSecond");
 
+	if( h->req_client && (h->req_client->type->flags & FLAG_CONVERT_MS) ) {
+	  int sec = atoi(PosSecond);
+	  sec /= 1000;
+	  sprintf(PosSecond, "%d", sec);
+	}
 	if ( atoi(PosSecond) < 30 )
 		PosSecond = "0";
 	else
